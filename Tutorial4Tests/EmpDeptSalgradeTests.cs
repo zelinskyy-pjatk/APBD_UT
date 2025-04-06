@@ -9,7 +9,7 @@ public class EmpDeptSalgradeTests
     {
         var emps = Database.GetEmps();
 
-        List<Emp> result = emps.Where(e => e.Job == "SALESMAN").ToList();
+        var result = emps.Where(e => e.Job == "SALESMAN").ToList();
 
         Assert.Equal(2, result.Count);
         Assert.All(result, e => Assert.Equal("SALESMAN", e.Job));
@@ -22,9 +22,8 @@ public class EmpDeptSalgradeTests
     {
         var emps = Database.GetEmps();
 
-        List<Emp> result = emps.Where(e => e.DeptNo == 30)
-                               .OrderByDescending(e => e.Sal)
-                               .ToList();
+        var result = emps.Where(e => e.DeptNo == 30)
+                               .OrderByDescending(e => e.Sal).ToList();
 
         Assert.Equal(2, result.Count);
         Assert.True(result[0].Sal >= result[1].Sal);
@@ -38,8 +37,9 @@ public class EmpDeptSalgradeTests
         var emps = Database.GetEmps();
         var depts = Database.GetDepts();
         
-        var resDepts = depts.Where(d => d.Loc.Equals("CHICAGO")).Select(d => d.DeptNo).ToList();
-        List<Emp> result = emps.Where(e => resDepts.Contains(e.DeptNo)).ToList();
+        var resDepts = depts.Where(d => d.Loc.Equals("CHICAGO"))
+                                    .Select(d => d.DeptNo).ToList();
+        var result = emps.Where(e => resDepts.Contains(e.DeptNo)).ToList();
         
         Assert.All(result, e => Assert.Equal(30, e.DeptNo));
     }
@@ -116,7 +116,8 @@ public class EmpDeptSalgradeTests
         var emps = Database.GetEmps();
         var grades = Database.GetSalgrades();
         
-        var result = emps.SelectMany(e => grades.Where(g => e.Sal >= g.Losal && e.Sal < g.Hisal),
+        var result = emps.SelectMany(
+            e => grades.Where(g => e.Sal >= g.Losal && e.Sal < g.Hisal),
             (e, g) => new {EName = e.EName, Grade = g.Grade});
             
         Assert.Contains(result, r => r.EName == "ALLEN" && r.Grade == 3);
